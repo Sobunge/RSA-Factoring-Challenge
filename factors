@@ -1,26 +1,26 @@
-#!/usr/bin/python3
+#!/usr/bin/env bash
+# factors challenge
 
-import sys
+check_factor() {
+    num1=$2
+    num2=$3
+    if [ "$num2" -gt "$num1" ]; then
+        # Swap num1 and num2 if num2 is greater
+        tmp=$num1
+        num1=$num2
+        num2=$tmp
+    fi
+    echo "$1=$num1*$num2"
+}
 
-def factorize_number(n):
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return i, n // i
-    return None
-
-def main(file_path):
-    with open(file_path, 'r') as file:
-        for line in file:
-            number = int(line.strip())
-            factors = factorize_number(number)
-            if factors:
-                print(f"{number}={factors[0]}*{factors[1]}")
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: factors <file>")
-        sys.exit(1)
-
-    file_path = sys.argv[1]
-    main(file_path)
+if [ $# -ne 1 ]; then
+    echo 'Usage: factors <file>'
+    exit 1
+else
+    while read -r i; do
+        result=$(factor "$i" | sed 's/.*: //')
+        IFS=' ' read -ra factors <<< "$result"
+        check_factor "$i" "${factors[@]}"
+    done < "$1"
+fi
 
